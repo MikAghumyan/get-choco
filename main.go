@@ -1,91 +1,73 @@
 package main
 
 import (
-	"fmt"
-	"strings"
+"bufio"
+"fmt"
+"os"
+"os/signal"
+"strings"
+"syscall"
+"time"
 )
 
 const (
-	// ANSI color codes
-	reset      = "\033[0m"
-	boldBrown  = "\033[1;33m"
-	darkBrown  = "\033[38;5;94m"
-	lightBrown = "\033[38;5;130m"
-	bgBrown    = "\033[48;5;94m"
-	bgDark     = "\033[48;5;52m"
+reset       = "\033[0m"
+bgPurple    = "\033[48;5;135m" // Lighter Lilac
+fgPurple    = "\033[38;5;135m"
+fgWhite     = "\033[38;5;255m"
+boldWhite   = "\033[1;97m"
+
+// Colors for the chocolate inside
+bgBrown     = "\033[48;5;94m"
+fgBrown     = "\033[38;5;52m"
+
+greenCheck  = "\033[38;5;34m✓\033[0m"
+green = "\033[38;5;34m"
+red = "\033[38;5;160m"
 )
 
-// Chocolate bar dimensions
-const (
-	cols   = 6 // number of chocolate pieces per row
-	rows   = 4 // number of chocolate piece rows
-	pieceW = 6 // width of each piece in chars
-	pieceH = 3 // height of each piece in lines
-)
-
-func drawChocolate() {
-	fmt.Println()
-	fmt.Printf("%s  🍫  Welcome to get-choco! Here's your chocolate bar:  🍫%s\n", boldBrown, reset)
-	fmt.Println()
-
-	totalWidth := cols*pieceW + cols + 1
-
-	// Top border
-	fmt.Printf("%s%s%s\n", darkBrown, "▄"+strings.Repeat("▄", totalWidth-1), reset)
-
-	for row := 0; row < rows; row++ {
-		// Top of piece row (divider line or top)
-		printDividerLine(row, totalWidth)
-
-		// Middle lines of each piece
-		for line := 0; line < pieceH-1; line++ {
-			printPieceLine()
-		}
+func printLoading(message string) {
+	fmt.Print(message)
+	for i := 0; i < 3; i++ {
+		time.Sleep(500 * time.Millisecond)
+		fmt.Print(".")
 	}
-
-	// Bottom row closure
-	printDividerLine(rows, totalWidth)
-
-	// Bottom border
-	fmt.Printf("%s%s%s\n", darkBrown, "▀"+strings.Repeat("▀", totalWidth-1), reset)
-
-	fmt.Println()
-	fmt.Printf("%s  Enjoy your chocolate! 🍫%s\n", lightBrown, reset)
-	fmt.Println()
-}
-
-// printDividerLine prints the horizontal divider between chocolate rows.
-func printDividerLine(row, totalWidth int) {
-	if row == 0 || row == rows {
-		// outer horizontal border
-		fmt.Printf("%s|%s%s|%s\n", darkBrown, bgBrown+strings.Repeat(" ", totalWidth-2)+reset, darkBrown, reset)
-		return
-	}
-	// inner divider with piece notches
-	line := darkBrown + "|" + reset
-	for c := 0; c < cols; c++ {
-		line += bgDark + strings.Repeat("_", pieceW) + reset
-		if c < cols-1 {
-			line += darkBrown + "|" + reset
-		}
-	}
-	line += darkBrown + "|" + reset
-	fmt.Println(line)
-}
-
-// printPieceLine prints a single content line across all pieces in a row.
-func printPieceLine() {
-	line := darkBrown + "|" + reset
-	for c := 0; c < cols; c++ {
-		line += bgBrown + strings.Repeat(" ", pieceW) + reset
-		if c < cols-1 {
-			line += darkBrown + "|" + reset
-		}
-	}
-	line += darkBrown + "|" + reset
-	fmt.Println(line)
+	fmt.Println(" " + greenCheck + green + " [OK]" + reset)
 }
 
 func main() {
-	drawChocolate()
+	// Ignore SIGINT completely
+	signal.Ignore(os.Interrupt, syscall.SIGTERM)
+	signal.Ignore(os.Interrupt, syscall.SIGINT)
+	signal.Ignore(os.Interrupt, syscall.SIGQUIT)
+
+	// Clear the terminal screen before rendering
+	fmt.Print("\033[H\033[2J")
+	printLoading("Initializing affection protocols")
+	printLoading("Setting up sweetness modules")
+	printLoading("Loading Milka package")
+	printLoading("Almost there")
+	fmt.Print("\033[H\033[2J")
+
+	w := 54
+	drawFullPackage(w)
+
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		fmt.Print("Do you want to (t)ake a piece or (i)gnore it? [t/i]: ")
+		input, err := reader.ReadString('\n')
+		if err != nil {
+			return
+		}
+
+		input = strings.TrimSpace(strings.ToLower(input))
+		if input == "t" {
+			// Clear again and draw opened output
+			fmt.Print("\033[H\033[2J")
+			drawOpenedPackage(w)
+			break
+		} else {
+			fmt.Println(red + "[KO] " + reset + "You tried to ignore it, but the Milka is too tempting! 🐄💜")
+		}
+	}
 }
