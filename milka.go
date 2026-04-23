@@ -71,7 +71,7 @@ func drawFullPackage(w int) {
 	// Bottom zigzag
 	bottomEdge := strings.Repeat("▼", w)
 	fmt.Println("  " + fgPurple + bottomEdge + reset)
-	fmt.Println("\n   Enjoy your Milka! 🐄⛰️💜\n")
+	fmt.Println("\n   Enjoy your Milka! 🐄⛰️💜")
 }
 
 func drawOpenedPackage(w int) {
@@ -100,9 +100,9 @@ func drawOpenedPackage(w int) {
 		fmt.Println("  " + fgPurple + bottomEdge + reset)
 
 		if i == 5 {
-			fmt.Println("\n   " + green + "[OK] " + reset + "You took a piece! Mmm... Delicious! 🍫😋\n")
+			fmt.Println("\n   " + green + "[OK] " + reset + "You took a piece! Mmm... Delicious! 🍫😋")
 		} else {
-			fmt.Println("\n   Unwrapping... 🎁\n")
+			fmt.Println("\n   Unwrapping... 🎁")
 		}
 
 		if i < 5 {

@@ -1,29 +1,30 @@
 package main
 
 import (
-"bufio"
-"fmt"
-"os"
-"os/signal"
-"strings"
-"syscall"
-"time"
+	"bufio"
+	"fmt"
+	"io"
+	"os"
+	"os/signal"
+	"strings"
+	"syscall"
+	"time"
 )
 
 const (
-reset       = "\033[0m"
-bgPurple    = "\033[48;5;135m" // Lighter Lilac
-fgPurple    = "\033[38;5;135m"
-fgWhite     = "\033[38;5;255m"
-boldWhite   = "\033[1;97m"
+	reset     = "\033[0m"
+	bgPurple  = "\033[48;5;135m" // Lighter Lilac
+	fgPurple  = "\033[38;5;135m"
+	fgWhite   = "\033[38;5;255m"
+	boldWhite = "\033[1;97m"
 
-// Colors for the chocolate inside
-bgBrown     = "\033[48;5;94m"
-fgBrown     = "\033[38;5;52m"
+	// Colors for the chocolate inside
+	bgBrown = "\033[48;5;94m"
+	fgBrown = "\033[38;5;52m"
 
-greenCheck  = "\033[38;5;34m✓\033[0m"
-green = "\033[38;5;34m"
-red = "\033[38;5;160m"
+	greenCheck = "\033[38;5;34m✓\033[0m"
+	green      = "\033[38;5;34m"
+	red        = "\033[38;5;160m"
 )
 
 func printLoading(message string) {
@@ -57,7 +58,11 @@ func main() {
 		fmt.Print("Do you want to (t)ake a piece or (i)gnore it? [t/i]: ")
 		input, err := reader.ReadString('\n')
 		if err != nil {
-			return
+			if err == io.EOF {
+				fmt.Println("")
+			} else {
+				return
+			}
 		}
 
 		input = strings.TrimSpace(strings.ToLower(input))
